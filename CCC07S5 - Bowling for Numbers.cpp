@@ -5,33 +5,9 @@ using namespace std;
 
 int pins[30001], sum[30001], p[30001][501], n, b, w, i, j, t;
 
-int go(int start, int balls)
-{
-    int newp = sum[start], maxp=0, i, j, nextp = 0;
-
-	if (p[start][balls] != 0)
-		return p[start][balls];
-
-    if (balls == 0 || start >= n)
-        return 0;
-
-    newp += go(start+w, balls-1);
-
-	nextp = go(start+1, balls);
-
-	maxp = max(maxp, newp);
-	maxp = max(maxp, nextp);
-
-    if (sum[start] > maxp)
-        maxp = sum[start];
-
-    p[start][balls] = maxp;
-	return p[start][balls];
-}
-
 int main()
 {
-	freopen("test.in", "r", stdin);
+	//freopen("test.in", "r", stdin);
 
 	scanf("%d", &t);
 	while (t>0)
@@ -47,7 +23,21 @@ int main()
 			for (i=j; i<min(j+w, n); i++)
 				sum[j] += pins[i];
 
-		printf("%d\n", go(0, b));
+		for (int start=n-1; start>=0; start--)
+			for (int balls=1; balls<=b; balls++)
+			{				
+				int newp = sum[start], maxp=0, nextp = 0;
+
+				newp += p[min(start+w, n)][balls-1];
+				nextp = p[min(start+1, n)][balls];
+
+				maxp = max(maxp, newp);
+				maxp = max(maxp, nextp);
+
+				p[start][balls] = maxp;
+			}
+
+		printf("%d\n", p[0][b]);
 		t--;
 	}
 
